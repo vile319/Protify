@@ -4,8 +4,42 @@ import numpy as np
 from typing import Optional
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
 from dataclasses import dataclass
-from probes.hybrid_probe import HybridProbe, HybridProbeConfig
-from data.dataset_classes import (
+try:
+    from .hybrid_probe import HybridProbe, HybridProbeConfig
+except Exception:
+    try:
+        from protify.probes.hybrid_probe import HybridProbe, HybridProbeConfig
+    except Exception:
+        from probes.hybrid_probe import HybridProbe, HybridProbeConfig
+
+try:
+    from ..data.dataset_classes import (
+        EmbedsLabelsDatasetFromDisk,
+        PairEmbedsLabelsDatasetFromDisk,
+        EmbedsLabelsDataset,
+        PairEmbedsLabelsDataset,
+        StringLabelDataset,
+        PairStringLabelDataset,
+    )
+except Exception:
+    try:
+        from protify.data.dataset_classes import (
+            EmbedsLabelsDatasetFromDisk,
+            PairEmbedsLabelsDatasetFromDisk,
+            EmbedsLabelsDataset,
+            PairEmbedsLabelsDataset,
+            StringLabelDataset,
+            PairStringLabelDataset,
+        )
+    except Exception:
+        from data.dataset_classes import (
+            EmbedsLabelsDatasetFromDisk,
+            PairEmbedsLabelsDatasetFromDisk,
+            EmbedsLabelsDataset,
+            PairEmbedsLabelsDataset,
+            StringLabelDataset,
+            PairStringLabelDataset,
+        )
     EmbedsLabelsDatasetFromDisk,
     PairEmbedsLabelsDatasetFromDisk,
     EmbedsLabelsDataset,
@@ -13,15 +47,52 @@ from data.dataset_classes import (
     StringLabelDataset,
     PairStringLabelDataset,
 )
-from data.data_collators import (
-    EmbedsLabelsCollator,
-    PairEmbedsLabelsCollator,
-    PairCollator_input_ids,
-    StringLabelsCollator,
-)
-from visualization.ci_plots import regression_ci_plot, classification_ci_plot
-from utils import print_message
-from metrics import get_compute_metrics
+try:
+    from ..data.data_collators import (
+        EmbedsLabelsCollator,
+        PairEmbedsLabelsCollator,
+        PairCollator_input_ids,
+        StringLabelsCollator,
+    )
+except Exception:
+    try:
+        from protify.data.data_collators import (
+            EmbedsLabelsCollator,
+            PairEmbedsLabelsCollator,
+            PairCollator_input_ids,
+            StringLabelsCollator,
+        )
+    except Exception:
+        from data.data_collators import (
+            EmbedsLabelsCollator,
+            PairEmbedsLabelsCollator,
+            PairCollator_input_ids,
+            StringLabelsCollator,
+        )
+
+try:
+    from ..visualization.ci_plots import regression_ci_plot, classification_ci_plot
+except Exception:
+    try:
+        from protify.visualization.ci_plots import regression_ci_plot, classification_ci_plot
+    except Exception:
+        from visualization.ci_plots import regression_ci_plot, classification_ci_plot
+
+try:
+    from ..utils import print_message
+except Exception:
+    try:
+        from protify.utils import print_message
+    except Exception:
+        from utils import print_message
+
+try:
+    from ..metrics import get_compute_metrics
+except Exception:
+    try:
+        from protify.metrics import get_compute_metrics
+    except Exception:
+        from metrics import get_compute_metrics
 
 
 @dataclass

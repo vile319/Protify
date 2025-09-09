@@ -9,8 +9,21 @@ from sklearn.manifold import TSNE as SklearnTSNE
 from typing import Optional, Union, List
 from matplotlib.colors import LinearSegmentedColormap
 
-from utils import torch_load, print_message
-from seed_utils import get_global_seed
+try:
+    from ..utils import torch_load, print_message
+except Exception:
+    try:
+        from protify.utils import torch_load, print_message
+    except Exception:
+        from utils import torch_load, print_message
+
+try:
+    from ..seed_utils import get_global_seed
+except Exception:
+    try:
+        from protify.seed_utils import get_global_seed
+    except Exception:
+        from seed_utils import get_global_seed
 
 
 @dataclass

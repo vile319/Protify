@@ -9,9 +9,29 @@ from pandas import read_csv, read_excel
 from datasets import load_dataset, Dataset
 from dataclasses import dataclass
 
-from utils import print_message
-from seed_utils import get_global_seed
-from .supported_datasets import supported_datasets, standard_data_benchmark
+try:
+    from .utils import print_message
+except Exception:
+    try:
+        from protify.data.utils import print_message
+    except Exception:
+        from utils import print_message
+
+try:
+    from ..seed_utils import get_global_seed
+except Exception:
+    try:
+        from protify.seed_utils import get_global_seed
+    except Exception:
+        from seed_utils import get_global_seed
+
+try:
+    from .supported_datasets import supported_datasets, standard_data_benchmark
+except Exception:
+    try:
+        from protify.data.supported_datasets import supported_datasets, standard_data_benchmark
+    except Exception:
+        from supported_datasets import supported_datasets, standard_data_benchmark
 
 AMINO_ACIDS = set('LAGVSERTIPDKQNFYMHWCXBUOZ*')
 CODONS = set('aA@bB#$%rRnNdDcCeEqQ^G&ghHiIj+MmlJLkK(fFpPoO=szZwSXTtxWyYuvUV]})')

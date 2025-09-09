@@ -4,7 +4,13 @@ import seaborn as sns
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
 from sklearn.metrics import r2_score
-from .pauc.pauc import plot_roc_with_ci
+try:
+    from .pauc.pauc import plot_roc_with_ci
+except Exception:
+    try:
+        from protify.visualization.pauc.pauc import plot_roc_with_ci
+    except Exception:
+        from visualization.pauc.pauc import plot_roc_with_ci
 
 
 def regression_ci_plot(y_true, y_pred, save_path, title=None):

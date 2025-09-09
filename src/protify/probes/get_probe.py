@@ -1,9 +1,57 @@
 from dataclasses import dataclass, field
 from typing import List
-from .linear_probe import LinearProbe, LinearProbeConfig
-from .transformer_probe import TransformerForSequenceClassification, TransformerForTokenClassification, TransformerProbeConfig
-from .retrievalnet import RetrievalNetForSequenceClassification, RetrievalNetForTokenClassification, RetrievalNetConfig
-from .lyra_probe import LyraForSequenceClassification, LyraForTokenClassification, LyraConfig
+try:
+    from .linear_probe import LinearProbe, LinearProbeConfig
+    from .transformer_probe import (
+        TransformerForSequenceClassification,
+        TransformerForTokenClassification,
+        TransformerProbeConfig,
+    )
+    from .retrievalnet import (
+        RetrievalNetForSequenceClassification,
+        RetrievalNetForTokenClassification,
+        RetrievalNetConfig,
+    )
+    from .lyra_probe import (
+        LyraForSequenceClassification,
+        LyraForTokenClassification,
+        LyraConfig,
+    )
+except Exception:
+    try:
+        from protify.probes.linear_probe import LinearProbe, LinearProbeConfig
+        from protify.probes.transformer_probe import (
+            TransformerForSequenceClassification,
+            TransformerForTokenClassification,
+            TransformerProbeConfig,
+        )
+        from protify.probes.retrievalnet import (
+            RetrievalNetForSequenceClassification,
+            RetrievalNetForTokenClassification,
+            RetrievalNetConfig,
+        )
+        from protify.probes.lyra_probe import (
+            LyraForSequenceClassification,
+            LyraForTokenClassification,
+            LyraConfig,
+        )
+    except Exception:
+        from linear_probe import LinearProbe, LinearProbeConfig
+        from transformer_probe import (
+            TransformerForSequenceClassification,
+            TransformerForTokenClassification,
+            TransformerProbeConfig,
+        )
+        from retrievalnet import (
+            RetrievalNetForSequenceClassification,
+            RetrievalNetForTokenClassification,
+            RetrievalNetConfig,
+        )
+        from lyra_probe import (
+            LyraForSequenceClassification,
+            LyraForTokenClassification,
+            LyraConfig,
+        )
 
 
 @dataclass

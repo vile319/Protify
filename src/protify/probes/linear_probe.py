@@ -3,7 +3,13 @@ from torch import nn
 from typing import Optional
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import SequenceClassifierOutput
-from model_components.mlp import intermediate_correction_fn
+try:
+    from ..model_components.mlp import intermediate_correction_fn
+except Exception:
+    try:
+        from protify.model_components.mlp import intermediate_correction_fn
+    except Exception:
+        from model_components.mlp import intermediate_correction_fn
 from .losses import get_loss_fct
 
 

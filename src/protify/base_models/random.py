@@ -2,7 +2,13 @@ import torch
 import torch.nn as nn
 from typing import Optional
 from transformers import EsmTokenizer, EsmConfig
-from model_components.transformer import TransformerForMaskedLM, TransformerConfig
+try:
+    from ..model_components.transformer import TransformerForMaskedLM, TransformerConfig
+except Exception:
+    try:
+        from protify.model_components.transformer import TransformerForMaskedLM, TransformerConfig
+    except Exception:
+        from model_components.transformer import TransformerForMaskedLM, TransformerConfig
 
 
 presets = {

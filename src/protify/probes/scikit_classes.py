@@ -2,10 +2,44 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV
 from typing import Dict, Any, Tuple, Optional
-from metrics import get_regression_scorer, get_classification_scorer, classification_scorer, regression_scorer
+try:
+    from ..metrics import (
+        get_regression_scorer,
+        get_classification_scorer,
+        classification_scorer,
+        regression_scorer,
+    )
+except Exception:
+    try:
+        from protify.metrics import (
+            get_regression_scorer,
+            get_classification_scorer,
+            classification_scorer,
+            regression_scorer,
+        )
+    except Exception:
+        from metrics import (
+            get_regression_scorer,
+            get_classification_scorer,
+            classification_scorer,
+            regression_scorer,
+        )
 
-from utils import print_message
-from seed_utils import get_global_seed
+try:
+    from ..utils import print_message
+except Exception:
+    try:
+        from protify.utils import print_message
+    except Exception:
+        from utils import print_message
+        
+try:
+    from ..seed_utils import get_global_seed
+except Exception:
+    try:
+        from protify.seed_utils import get_global_seed
+    except Exception:
+        from seed_utils import get_global_seed
 from .lazy_predict import (
     LazyRegressor,
     LazyClassifier,

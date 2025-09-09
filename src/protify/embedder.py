@@ -8,12 +8,45 @@ from tqdm.auto import tqdm
 from dataclasses import dataclass
 from typing import Optional, Callable, List
 from huggingface_hub import hf_hub_download
-from seed_utils import seed_worker, dataloader_generator, get_global_seed
+try:
+    from .seed_utils import seed_worker, dataloader_generator, get_global_seed
+except Exception:
+    try:
+        from protify.seed_utils import seed_worker, dataloader_generator, get_global_seed
+    except Exception:
+        from seed_utils import seed_worker, dataloader_generator, get_global_seed
 
-from data.dataset_classes import SimpleProteinDataset
-from base_models.get_base_models import get_base_model
-from pooler import Pooler
-from utils import torch_load, print_message
+try:
+    from .data.dataset_classes import SimpleProteinDataset
+except Exception:
+    try:
+        from protify.data.dataset_classes import SimpleProteinDataset
+    except Exception:
+        from data.dataset_classes import SimpleProteinDataset
+
+try:
+    from .base_models.get_base_models import get_base_model
+except Exception:
+    try:
+        from protify.base_models.get_base_models import get_base_model
+    except Exception:
+        from base_models.get_base_models import get_base_model
+
+try:
+    from .pooler import Pooler
+except Exception:
+    try:
+        from protify.pooler import Pooler
+    except Exception:
+        from pooler import Pooler
+
+try:
+    from .utils import torch_load, print_message
+except Exception:
+    try:
+        from protify.utils import torch_load, print_message
+    except Exception:
+        from utils import torch_load, print_message
 
 
 def build_collator(tokenizer) -> Callable[[List[str]], tuple[torch.Tensor, torch.Tensor]]:

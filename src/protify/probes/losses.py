@@ -1,5 +1,11 @@
 import torch.nn as nn
-from utils import print_message
+try:
+    from ..utils import print_message
+except Exception:
+    try:
+        from protify.utils import print_message
+    except Exception:
+        from utils import print_message
 
 def get_loss_fct(task_type):
     """

@@ -1,11 +1,31 @@
-from .supported_datasets import (
-    supported_datasets,
-    internal_datasets,
-    possible_with_vector_reps,
-    standard_data_benchmark,
-    testing,
-    residue_wise_problems
-)
+try:
+    from .supported_datasets import (
+        supported_datasets,
+        internal_datasets,
+        possible_with_vector_reps,
+        standard_data_benchmark,
+        testing,
+        residue_wise_problems
+    )
+except Exception:
+    try:
+        from protify.data.supported_datasets import (
+            supported_datasets,
+            internal_datasets,
+            possible_with_vector_reps,
+            standard_data_benchmark,
+            testing,
+            residue_wise_problems
+        )
+    except Exception:
+        from supported_datasets import (
+            supported_datasets,
+            internal_datasets,
+            possible_with_vector_reps,
+            standard_data_benchmark,
+            testing,
+            residue_wise_problems
+        )
 
 def list_supported_datasets(with_descriptions=True):
     """
@@ -17,8 +37,12 @@ def list_supported_datasets(with_descriptions=True):
     try:
         from .dataset_descriptions import dataset_descriptions
         has_descriptions = True
-    except ImportError:
-        has_descriptions = False
+    except Exception:
+        try:
+            from protify.data.dataset_descriptions import dataset_descriptions
+            has_descriptions = True
+        except Exception:
+            has_descriptions = False
         
     if not with_descriptions or not has_descriptions:
         print("\n=== Supported Datasets ===\n")
@@ -67,8 +91,13 @@ def get_dataset_info(dataset_name):
         from .dataset_descriptions import dataset_descriptions
         if dataset_name in dataset_descriptions:
             return dataset_descriptions[dataset_name]
-    except ImportError:
-        pass
+    except Exception:
+        try:
+            from protify.data.dataset_descriptions import dataset_descriptions
+            if dataset_name in dataset_descriptions:
+                return dataset_descriptions[dataset_name]
+        except Exception:
+            pass
         
     if dataset_name in supported_datasets:
         return {"name": dataset_name, "source": supported_datasets[dataset_name]}

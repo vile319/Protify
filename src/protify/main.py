@@ -156,7 +156,13 @@ if __name__ == "__main__":
 
     # Set global seed before doing anything else    
     # If seed is None, set_global_seed will derive it from current time
-    from seed_utils import set_determinism
+    try:
+        from .seed_utils import set_determinism
+    except Exception:
+        try:
+            from protify.seed_utils import set_determinism
+        except Exception:
+            from seed_utils import set_determinism
     if args.deterministic:
         set_determinism()
 
@@ -164,17 +170,43 @@ if __name__ == "__main__":
 import torch
 from torchinfo import summary
 
-from probes.get_probe import ProbeArguments, get_probe
-from base_models.get_base_models import BaseModelArguments, get_tokenizer, get_base_model_for_training
-from base_models.utils import wrap_lora
-from data.data_mixin import DataMixin, DataArguments
-from probes.trainers import TrainerMixin, TrainerArguments
-from probes.scikit_classes import ScikitArguments, ScikitProbe
-from embedder import EmbeddingArguments, Embedder
-from logger import MetricsLogger, log_method_calls
-from utils import torch_load, print_message
-from visualization.plot_result import create_plots
-from seed_utils import set_global_seed
+try:
+    from .probes.get_probe import ProbeArguments, get_probe
+    from .base_models.get_base_models import BaseModelArguments, get_tokenizer, get_base_model_for_training
+    from .base_models.utils import wrap_lora
+    from .data.data_mixin import DataMixin, DataArguments
+    from .probes.trainers import TrainerMixin, TrainerArguments
+    from .probes.scikit_classes import ScikitArguments, ScikitProbe
+    from .embedder import EmbeddingArguments, Embedder
+    from .logger import MetricsLogger, log_method_calls
+    from .utils import torch_load, print_message
+    from .visualization.plot_result import create_plots
+    from .seed_utils import set_global_seed
+except Exception:
+    try:
+        from protify.probes.get_probe import ProbeArguments, get_probe
+        from protify.base_models.get_base_models import BaseModelArguments, get_tokenizer, get_base_model_for_training
+        from protify.base_models.utils import wrap_lora
+        from protify.data.data_mixin import DataMixin, DataArguments
+        from protify.probes.trainers import TrainerMixin, TrainerArguments
+        from protify.probes.scikit_classes import ScikitArguments, ScikitProbe
+        from protify.embedder import EmbeddingArguments, Embedder
+        from protify.logger import MetricsLogger, log_method_calls
+        from protify.utils import torch_load, print_message
+        from protify.visualization.plot_result import create_plots
+        from protify.seed_utils import set_global_seed
+    except Exception:
+        from probes.get_probe import ProbeArguments, get_probe
+        from base_models.get_base_models import BaseModelArguments, get_tokenizer, get_base_model_for_training
+        from base_models.utils import wrap_lora
+        from data.data_mixin import DataMixin, DataArguments
+        from probes.trainers import TrainerMixin, TrainerArguments
+        from probes.scikit_classes import ScikitArguments, ScikitProbe
+        from embedder import EmbeddingArguments, Embedder
+        from logger import MetricsLogger, log_method_calls
+        from utils import torch_load, print_message
+        from visualization.plot_result import create_plots
+        from seed_utils import set_global_seed
 
 
 class MainProcess(MetricsLogger, DataMixin, TrainerMixin):
