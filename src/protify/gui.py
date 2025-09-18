@@ -174,6 +174,13 @@ class GUI(MainProcess):
         entry_home_dir.grid(row=0, column=1, padx=10, pady=5)
         self.add_help_button(paths_frame, 0, 2, "Home directory for Protify.")
 
+        # HF Home (cache root)
+        ttk.Label(paths_frame, text="HF Home (cache root):").grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.settings_vars["hf_home"] = tk.StringVar(value="")
+        entry_hf_home = ttk.Entry(paths_frame, textvariable=self.settings_vars["hf_home"], width=30)
+        entry_hf_home.grid(row=7, column=1, padx=10, pady=5)
+        self.add_help_button(paths_frame, 7, 2, "Optional. Overrides Hugging Face cache directories (HF_HOME, HF_DATASETS_CACHE, etc.). Leave blank to use defaults.")
+
         # Log directory
         ttk.Label(paths_frame, text="Log Directory:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.settings_vars["log_dir"] = tk.StringVar(value="logs")
@@ -465,6 +472,24 @@ class GUI(MainProcess):
         spin_transformer_dropout.grid(row=12, column=1, padx=10, pady=5, sticky="w")
         self.add_help_button(self.probe_tab, 12, 2, "Dropout probability in the transformer layers (0.0-1.0).")
         
+        # Token Attention
+        ttk.Label(self.probe_tab, text="Token Attention:").grid(row=20, column=0, padx=10, pady=5, sticky="w")
+        self.settings_vars["token_attention"] = tk.BooleanVar(value=False)
+        check_token_attention = ttk.Checkbutton(self.probe_tab, variable=self.settings_vars["token_attention"])
+        check_token_attention.grid(row=20, column=1, padx=10, pady=5, sticky="w")
+        self.add_help_button(self.probe_tab, 20, 2, "If enabled, uses TokenFormer-style attention for token-parameter attention.")
+
+        # Similarity Type
+        ttk.Label(self.probe_tab, text="Similarity Type:").grid(row=21, column=0, padx=10, pady=5, sticky="w")
+        self.settings_vars["sim_type"] = tk.StringVar(value="dot")
+        combo_sim_type = ttk.Combobox(
+            self.probe_tab,
+            textvariable=self.settings_vars["sim_type"],
+            values=["dot", "euclidean", "cosine"]
+        )
+        combo_sim_type.grid(row=21, column=1, padx=10, pady=5)
+        self.add_help_button(self.probe_tab, 21, 2, "Similarity metric for token-parameter attention.")
+
         # Save Model
         ttk.Label(self.probe_tab, text="Save Model:").grid(row=13, column=0, padx=10, pady=5, sticky="w")
         self.settings_vars["save_model"] = tk.BooleanVar(value=False)
@@ -485,7 +510,7 @@ class GUI(MainProcess):
         # Lora checkbox
         ttk.Label(self.probe_tab, text="Use LoRA:").grid(row=16, column=0, padx=10, pady=5, sticky="w")
         self.settings_vars["use_lora"] = tk.BooleanVar(value=False)
-        check_lora = ttk.Checkbutton(self.probe_tab, variable=self.settings_vars["use_lora"])
+        check_lora = ttk.Checkbutton(self.probe_tab, variable=self.settings_vars["use_lora"])  # mapped to 'lora' in args
         check_lora.grid(row=16, column=1, padx=10, pady=5, sticky="w")
         self.add_help_button(self.probe_tab, 16, 2, "Whether to use Low-Rank Adaptation (LoRA) for fine-tuning.")
 
@@ -591,6 +616,13 @@ class GUI(MainProcess):
         spin_seed = ttk.Spinbox(self.trainer_tab, from_=0, to=10000, textvariable=self.settings_vars["seed"])
         spin_seed.grid(row=10, column=1, padx=10, pady=5, sticky="w")
         self.add_help_button(self.trainer_tab, 10, 2, "Random seed for reproducibility of experiments.")
+
+        # Deterministic
+        ttk.Label(self.trainer_tab, text="Deterministic:").grid(row=11, column=0, padx=10, pady=5, sticky="w")
+        self.settings_vars["deterministic"] = tk.BooleanVar(value=False)
+        check_deterministic = ttk.Checkbutton(self.trainer_tab, variable=self.settings_vars["deterministic"])
+        check_deterministic.grid(row=11, column=1, padx=10, pady=5, sticky="w")
+        self.add_help_button(self.trainer_tab, 11, 2, "Enable deterministic behavior (slower but reproducible).")
 
         run_button = ttk.Button(self.trainer_tab, text="Run trainer", command=self._run_trainer)
         run_button.grid(row=99, column=0, columnspan=2, pady=(10, 10))
@@ -735,6 +767,8 @@ class GUI(MainProcess):
             self.full_args.synthyra_api_key = synthyra_api_key
             self.full_args.wandb_api_key = wandb_api_key
             self.full_args.home_dir = self.settings_vars["home_dir"].get()
+            hf_home_val = self.settings_vars["hf_home"].get().strip()
+            self.full_args.hf_home = hf_home_val if hf_home_val != "" else None
 
             def _make_true_dir(path):
                 true_path = os.path.join(self.full_args.home_dir, path)
@@ -880,10 +914,13 @@ class GUI(MainProcess):
         self.full_args.probe_pooling_types = probe_pooling_types
         self.full_args.save_model = self.settings_vars["save_model"].get()
         self.full_args.production_model = self.settings_vars["production_model"].get()
-        self.full_args.use_lora = self.settings_vars["use_lora"].get()
+        # Map GUI names to CLI/args names
+        self.full_args.lora = self.settings_vars["use_lora"].get()
         self.full_args.lora_r = self.settings_vars["lora_r"].get()
         self.full_args.lora_alpha = self.settings_vars["lora_alpha"].get()
         self.full_args.lora_dropout = self.settings_vars["lora_dropout"].get()
+        self.full_args.sim_type = self.settings_vars["sim_type"].get()
+        self.full_args.token_attention = self.settings_vars["token_attention"].get()
 
         # Create probe args from full args
         self.probe_args = ProbeArguments(**self.full_args.__dict__)
@@ -901,19 +938,26 @@ class GUI(MainProcess):
     def _run_trainer(self):
         print_message("Starting training process...")
         # Gather settings
-        self.full_args.use_lora = self.settings_vars["use_lora"].get()
+        # Map GUI LoRA flag to expected arg name
+        self.full_args.lora = self.settings_vars["use_lora"].get()
         self.full_args.hybrid_probe = self.settings_vars["hybrid_probe"].get()
         self.full_args.full_finetuning = self.settings_vars["full_finetuning"].get()
         self.full_args.lora_r = self.settings_vars["lora_r"].get()
         self.full_args.lora_alpha = self.settings_vars["lora_alpha"].get()
         self.full_args.lora_dropout = self.settings_vars["lora_dropout"].get()
         self.full_args.num_epochs = self.settings_vars["num_epochs"].get()
-        self.full_args.trainer_batch_size = self.settings_vars["probe_batch_size"].get()
-        self.full_args.gradient_accumulation_steps = self.settings_vars["probe_grad_accum"].get()
+        # Align names to TrainerArguments
+        self.full_args.probe_batch_size = self.settings_vars["probe_batch_size"].get()
+        self.full_args.base_batch_size = self.settings_vars["base_batch_size"].get()
+        self.full_args.probe_grad_accum = self.settings_vars["probe_grad_accum"].get()
+        self.full_args.base_grad_accum = self.settings_vars["base_grad_accum"].get()
         self.full_args.lr = self.settings_vars["lr"].get()
         self.full_args.weight_decay = self.settings_vars["weight_decay"].get()
         self.full_args.patience = self.settings_vars["patience"].get()
         self.full_args.seed = self.settings_vars["seed"].get()
+        self.full_args.deterministic = self.settings_vars["deterministic"].get()
+        # Use embedding worker count for trainer dataloaders as well (can be split later)
+        self.full_args.num_workers = self.settings_vars["num_workers"].get()
 
         def background_run_trainer():
             self.trainer_args = TrainerArguments(**self.full_args.__dict__)

@@ -97,7 +97,6 @@ DATASET_NAMES = {
     'ec_active': 'EC active',
     'bernett_processed': 'bernett processed',
     
-    
     # Taxonomic datasets (alternative naming with full prefix)
     'taxonomy_domain': r'$taxonomy_{domain}$',
     'taxonomy_kingdom': r'$taxonomy_{kingdom}$', 
@@ -108,6 +107,19 @@ DATASET_NAMES = {
     'taxonomy_genus': r'$taxonomy_{genus}$',
     'taxonomy_species': r'$taxonomy_{species}$',
     'diff_phylogeny': r'$taxonomy_{different}$',
+
+    'diff_phylo': r'$taxonomy_{different}$',
+    'taxonomy_domain_0.4_clusters': r'$taxonomy_{domain}$',
+    'taxonomy_kingdom_0.4_clusters': r'$taxonomy_{kingdom}$',
+    'taxonomy_phylum_0.4_clusters': r'$taxonomy_{phylum}$',
+    'taxonomy_class_0.4_clusters': r'$taxonomy_{class}$',
+    'taxonomy_order_0.4_clusters': r'$taxonomy_{order}$',
+    'taxonomy_family_0.4_clusters': r'$taxonomy_{family}$',
+    'taxonomy_genus_0.4_clusters': r'$taxonomy_{genus}$',
+    'taxonomy_species_0.4_clusters': r'$taxonomy_{species}$',
+
+    'af2_plddt': r'$af2_{plddt}$',
+    'realness_dataset': 'realness',
     
     # Alternative naming patterns (for backwards compatibility)
     'EC': 'EC',

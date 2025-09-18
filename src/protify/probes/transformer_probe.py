@@ -4,7 +4,6 @@ from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import SequenceClassifierOutput, TokenClassifierOutput
 from typing import List, Optional
 
-
 try:
     from ..pooler import Pooler
 except ImportError:
